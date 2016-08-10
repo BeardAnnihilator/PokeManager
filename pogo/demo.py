@@ -317,30 +317,28 @@ def viewCounts(session):
 		evolutions = ''
 		skipCount = 0
 		pokedexNum = getattr(pokedex, monster[0])
-		try:
-			candies = session.checkInventory().candies[pokedexNum]
-		except:
-			skipCount = 1
-			try:
-				candies = session.checkInventory().candies[pokedexNum - 1]
-			except:
-				try:
-					candies = session.checkInventory().candies[pokedexNum - 2]
-				except:
-					candies = 0
-
 		if(pokedex.evolves[pokedexNum]):
+			try:
+				candies = session.checkInventory().candies[pokedexNum]
+			except:
+				skipCount = 1
+				try:
+					candies = session.checkInventory().candies[pokedexNum - 1]
+				except:
+					try:
+						candies = session.checkInventory().candies[pokedexNum - 2]
+					except:
+						candies = 0
 			transfer = max(int(math.ceil(monster[1] - ((monster[1] + candies -1) / (pokedex.evolves[pokedexNum]-1)))),0)
 			evolutions = monster[1] - transfer
 			if evolutions > 0 and skipCount == 0:
 				countEvolutions += evolutions
 			if evolutions == 0:
 				evolutions = ''
-		print ' %-15s | %-5d | %-7d | %-8s | %-6s |' % (monster[0], monster[1], candies, transfer, evolutions)
-		# Write to the CSV
-		if saveCSV == 'y':
-			f.write(monster[0] + ',' + str(monster[1]) + ',' + str(candies) + ',' + str(transfer)+ ',' + str(evolutions) + '\n')
-	
+			print ' %-15s | %-5d | %-7d | %-8s | %-6s |' % (monster[0], monster[1], candies, transfer, evolutions)
+			# Write to the CSV
+			if saveCSV == 'y':
+				f.write(monster[0] + ',' + str(monster[1]) + ',' + str(candies) + ',' + str(transfer)+ ',' + str(evolutions) + '\n')
 	logging.info('\nYou can evolve a total of %s Base Pokemon.', countEvolutions)
 	
 	# Close the CSV
